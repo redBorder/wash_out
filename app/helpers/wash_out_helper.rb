@@ -30,8 +30,8 @@ module WashOutHelper
             wsdl_data(xml, param.map)
           end
         else
-          param.map.each do |p|
-            xml.tag! tag_name, param_options do
+          xml.tag! tag_name, param_options do
+            param.map.each do |p|
               wsdl_data(xml, p.map)
             end
           end
