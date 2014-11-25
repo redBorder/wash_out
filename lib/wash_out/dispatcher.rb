@@ -139,7 +139,7 @@ module WashOut
              :layout => false,
              :locals => {
                :result => inject.call(result, @action_spec[:out]),
-               :response_tag_attributes => (options[:attributes][:response_tag] rescue {})
+               :response_tag_attributes => (options[:response_tag_attributes] rescue {})
              },
              :content_type => 'text/xml'
     end
