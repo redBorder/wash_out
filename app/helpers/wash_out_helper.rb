@@ -13,6 +13,7 @@ module WashOutHelper
     params.each do |param|
       tag_name = param.name
       param_options = wsdl_data_options(param)
+      param_options.merge! param.attributes
 
       if !param.struct?
         if !param.multiplied
@@ -25,7 +26,7 @@ module WashOutHelper
         end
       else
         if !param.multiplied
-          xml.tag! tag_name,  param_options do
+          xml.tag! tag_name, param_options do
             wsdl_data(xml, param.map)
           end
         else

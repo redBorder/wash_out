@@ -96,7 +96,11 @@ module WashOut
               "was expected."
           end
 
-          value = data[param.raw_name]
+          if data[param.raw_name].is_a?(Hash)
+            value = data[param.raw_name].except(:attributes)
+          else
+            value = data[param.raw_name]
+          end
 
           unless value.nil?
             if param.multiplied && !value.is_a?(Array)
@@ -118,6 +122,13 @@ module WashOut
             else
               result_spec[i].value = value
             end
+
+            # Copy attributes
+            if data[param.raw_name].is_a?(Hash)
+              result_spec[i].attributes = data[param.raw_name].fetch(:attributes, {})
+            else
+              result_spec[i].attributes = {}
+            end
           end
         end
 
@@ -126,7 +137,10 @@ module WashOut
 
       render :template => "wash_with_soap/#{soap_config.wsdl_style}/response",
              :layout => false,
-             :locals => { :result => inject.call(result, @action_spec[:out]) },
+             :locals => {
+               :result => inject.call(result, @action_spec[:out]),
+               :response_tag_attributes => (options[:attributes][:response_tag] rescue {})
+             },
              :content_type => 'text/xml'
     end
 

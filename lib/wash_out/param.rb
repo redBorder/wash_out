@@ -7,6 +7,7 @@ module WashOut
     attr_accessor :multiplied
     attr_accessor :value
     attr_accessor :source_class
+    attr_accessor :attributes
 
     # Defines a WSDL parameter with name +name+ and type specifier +type+.
     # The type specifier format is described in #parse_def.
@@ -17,6 +18,7 @@ module WashOut
       @raw_name   = name.to_s
       @map        = {}
       @multiplied = multiplied
+      @attributes = {}
 
       if soap_config.camelize_wsdl.to_s == 'lower'
         @name = @name.camelize(:lower)
