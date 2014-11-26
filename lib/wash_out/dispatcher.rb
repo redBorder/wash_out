@@ -32,9 +32,26 @@ module WashOut
     end
 
     def _map_soap_parameters
+
       strip_empty_nodes = lambda{|hash|
+
         hash.keys.each do |key|
           if hash[key].is_a? Hash
+            
+            aux_attributes = {}
+
+            # Inline tags attributes will be added to _attibutes entry into the hash
+            hash[key].each do |k, v|
+              if k.to_s[0] == '@'
+                aux_attributes[k[1..-1]] = v
+              end
+            end
+
+            # If there are no inline attributes, dont include _attributes
+            if aux_attributes.length > 0
+              hash[key][:_attributes] = aux_attributes
+            end
+
             value = hash[key].delete_if{|k, v| k.to_s[0] == '@'}
 
             if value.length > 0
@@ -52,6 +69,7 @@ module WashOut
 
     # Creates the final parameter hash based on the request spec and xml_data from the request
     def _load_params(spec, xml_data)
+
       params = HashWithIndifferentAccess.new
       spec.each do |param|
         key = param.raw_name.to_sym
