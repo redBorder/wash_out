@@ -115,7 +115,7 @@ module WashOut
           end
 
           if data[param.raw_name].is_a?(Hash)
-            value = data[param.raw_name].except(:attributes)
+            value = data[param.raw_name].except(:_attributes)
           else
             value = data[param.raw_name]
           end
@@ -143,7 +143,7 @@ module WashOut
 
             # Copy attributes
             if data[param.raw_name].is_a?(Hash)
-              result_spec[i].attributes = data[param.raw_name].fetch(:attributes, {})
+              result_spec[i].attributes = data[param.raw_name].fetch(:_attributes, {})
             else
               result_spec[i].attributes = {}
             end
