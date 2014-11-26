@@ -49,7 +49,7 @@ module WashOut
 
             # If there are no inline attributes, dont include _attributes
             if aux_attributes.length > 0
-              hash[key][:_attributes] = aux_attributes
+              hash[key][:attributes!] = aux_attributes
             end
 
             value = hash[key].delete_if{|k, v| k.to_s[0] == '@'}
@@ -115,7 +115,7 @@ module WashOut
           end
 
           if data[param.raw_name].is_a?(Hash)
-            value = data[param.raw_name].except(:_attributes)
+            value = data[param.raw_name].except(:attributes!)
           else
             value = data[param.raw_name]
           end
@@ -143,7 +143,7 @@ module WashOut
 
             # Copy attributes
             if data[param.raw_name].is_a?(Hash)
-              result_spec[i].attributes = data[param.raw_name].fetch(:_attributes, {})
+              result_spec[i].attributes = data[param.raw_name].fetch(:attributes!, {})
             else
               result_spec[i].attributes = {}
             end

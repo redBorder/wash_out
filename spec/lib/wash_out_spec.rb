@@ -464,6 +464,20 @@ describe WashOut do
         savon(:base64, :value => Base64.encode64('test'))
         lambda { savon(:base64) }.should_not raise_exception
       end
+
+      it "recognize attributes" do
+        mock_controller do
+          soap_action "attributes", :args => { 'test' => { :_attributes => { param1: 'a', param2: 'b' } } }
+          def attributes
+            params['test']['_attributes']['param1'].should == 'a'
+            params['test']['_attributes']['param2'].should == 'b'
+            render :soap => nil
+          end
+        end
+
+        savon(:attributes, :value => { 'test' })
+        lambda { savon(:base64) }.should_not raise_exception
+      end
     end
 
     context "errors" do
