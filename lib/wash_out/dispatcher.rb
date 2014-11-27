@@ -227,7 +227,7 @@ module WashOut
     def xml_data
       xml_data = env['wash_out.soap_data'].values_at(:envelope, :Envelope).compact.first
       xml_data = xml_data.values_at(:body, :Body).compact.first
-      xml_data = xml_data.values_at(soap_action.underscore.to_sym, soap_action.to_sym).compact.first || {}
+      xml_data = xml_data.values_at(action_spec[:request_tag].try(:to_sym), soap_action.underscore.to_sym, soap_action.to_sym).compact.first || {}
     end
 
   end
