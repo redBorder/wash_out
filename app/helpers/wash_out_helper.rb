@@ -15,28 +15,38 @@ module WashOutHelper
       param_options = wsdl_data_options(param)
       param_options.merge! param.attributes
 
-      if !param.struct?
-        if !param.multiplied
-          xml.tag! tag_name, param.value, param_options
-        else
-          param.value = [] unless param.value.is_a?(Array)
-          param.value.each do |v|
-            xml.tag! tag_name, v, param_options
+      if tag_name == 'value'
+        if param.multiplied
+          param.map.each do |p|
+            wsdl_data(xml, p.map)
           end
+        else
+          wsdl_data(xml, param.map)
         end
       else
-        if !param.multiplied
-          if param.map.empty?
-            xml.tag! tag_name, param_options
+        if !param.struct?
+          if !param.multiplied
+            xml.tag! tag_name, param.value, param_options
           else
-            xml.tag! tag_name, param_options do
-              wsdl_data(xml, param.map)
+            param.value = [] unless param.value.is_a?(Array)
+            param.value.each do |v|
+              xml.tag! tag_name, v, param_options
             end
           end
         else
-          xml.tag! tag_name, param_options do
-            param.map.each do |p|
-              wsdl_data(xml, p.map)
+          if !param.multiplied
+            if param.map.empty?
+              xml.tag! tag_name, param_options
+            else
+              xml.tag! tag_name, param_options do
+                wsdl_data(xml, param.map)
+              end
+            end
+          else
+            xml.tag! tag_name, param_options do
+              param.map.each do |p|
+                wsdl_data(xml, p.map)
+              end
             end
           end
         end
