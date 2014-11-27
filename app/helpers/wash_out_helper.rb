@@ -26,8 +26,12 @@ module WashOutHelper
         end
       else
         if !param.multiplied
-          xml.tag! tag_name, param_options do
-            wsdl_data(xml, param.map)
+          if param.map.empty?
+            xml.tag! tag_name, param_options
+          else
+            xml.tag! tag_name, param_options do
+              wsdl_data(xml, param.map)
+            end
           end
         else
           xml.tag! tag_name, param_options do
