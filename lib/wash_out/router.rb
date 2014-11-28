@@ -73,9 +73,23 @@ module WashOut
 
     def call(env)
       @controller = @controller_name.constantize
+      tmp_file = nil
+
+      if env['rack.input'].is_a? (Tempfile)
+        file = File.open env['rack.input']
+        3.times { file.gets }
+
+        name = env['rack.request.form_hash'].keys.first
+        tmp_file = Tempfile.new name
+        tmp_file.binmode
+        tmp_file << env['rack.request.form_hash'][name]
+
+        env['rack.input'] = StringIO.new file.gets
+      end
 
       soap_action     = parse_soap_action(env)
       soap_parameters = parse_soap_parameters(env)
+      soap_parameters[:tempfile] = tmp_file unless tmp_file.nil?
 
       action_spec = controller.soap_actions[soap_action]
 

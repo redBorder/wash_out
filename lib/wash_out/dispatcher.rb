@@ -77,6 +77,11 @@ module WashOut
           params[param.raw_name] = param.load(xml_data, key)
         end
       end
+
+      unless env['wash_out.soap_data'][:tempfile].nil?
+        params[:tempfile!] = env['wash_out.soap_data'][:tempfile]
+      end
+
       params
     end
 
@@ -221,7 +226,7 @@ module WashOut
     end
 
     def soap_action
-      request.env['wash_out.soap_action']
+      request.env['wash_out.soap_action'] || 'AddViewImage'
     end
 
     def xml_data
