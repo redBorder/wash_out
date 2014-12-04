@@ -170,21 +170,31 @@ module WashOut
 
     # Used to load an entire structure.
     def map_struct(data)
-      unless data.is_a?(Hash)
+      unless data.is_a?(Hash) or data.is_a?(Array)
         raise WashOut::Dispatcher::SOAPError, "SOAP message structure is broken"
       end
 
-      data   = data.with_indifferent_access
-      struct = {}.with_indifferent_access
-
-      # RUBY18 Enumerable#each_with_object is better, but 1.9 only.
-      @map.map do |param|
-        if data.has_key? param.raw_name
-          struct[param.raw_name] = yield param, data, param.raw_name
+      # if data is an array, call map_struct once per element
+      if data.is_a?(Array)
+        data.map do |x|
+          map_struct x do |param, dat, elem|
+            param.load(dat, elem)
+          end
         end
-      end
+      else
+        data   = data.with_indifferent_access
+        struct = {}.with_indifferent_access
 
-      struct
+        # RUBY18 Enumerable#each_with_object is better, but 1.9 only.
+        @map.map do |param|
+          if data.has_key? param.raw_name
+            struct[param.raw_name] = yield param, data, param.raw_name
+          end
+        end
+
+        struct
+      end
     end
+    
   end
 end

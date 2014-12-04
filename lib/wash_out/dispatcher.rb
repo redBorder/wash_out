@@ -59,6 +59,17 @@ module WashOut
             else
               hash[key] = nil
             end
+
+          elsif hash[key].is_a? Array
+            hash[key].map do |x|
+              strip_empty_nodes.call(x)
+            end
+
+          elsif key.to_s[0] == '@'
+            hash[:attributes!] ||= {}
+            hash[:attributes!][key[1..-1]] = hash[key]
+
+            hash.delete key
           end
         end
 
