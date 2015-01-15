@@ -20,7 +20,10 @@ module WashOut
 
       # binding.pry
       if soap_action.blank?
-        soap_action = nori(controller.soap_config.snakecase_input).parse(soap_body env)
+        parsed_soap_body = nori(controller.soap_config.snakecase_input).parse(soap_body env)
+        return nil if parsed_soap_body.blank?
+
+        soap_action = parsed_soap_body
             .values_at(:envelope, :Envelope).compact.first
             .values_at(:body, :Body).compact.first
             .keys.first.to_s
@@ -88,6 +91,8 @@ module WashOut
       end
 
       soap_action     = parse_soap_action(env)
+      return [200, {}, ['OK']] if soap_action.blank?
+
       soap_parameters = parse_soap_parameters(env)
       soap_parameters[:tempfile] = tmp_file unless tmp_file.nil?
 
